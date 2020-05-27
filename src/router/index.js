@@ -20,6 +20,11 @@ export default new Router({
                     meta: { title: '系统首页' }
                 },
                 {
+                    path: '/userinfo',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/UserInfoTable.vue'),
+                    meta: { title: '人员信息' }
+                },
+                {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
                     meta: { title: '自定义图标' }
