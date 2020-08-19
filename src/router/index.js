@@ -25,6 +25,11 @@ export default new Router({
                     meta: { title: '人员信息' }
                 },
                 {
+                    path: '/relation',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Relation.vue'),
+                    meta: { title: '考核关系' }
+                },
+                {
                     path: '/icon',
                     component: () => import(/* webpackChunkName: "icon" */ '../components/page/Icon.vue'),
                     meta: { title: '自定义图标' }

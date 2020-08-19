@@ -62,9 +62,24 @@ export default {
                     title: '系统首页'
                 },
                 {
-                    icon: 'el-icon-lx-cascades',
-                    index: 'userinfo',
-                    title: '人员信息'
+                    icon: 'el-icon-lx-people',
+                    index: '2',
+                    title: '人员信息',
+                    subs: [
+                        {
+                            index: 'userinfo',
+                            title: '人员列表'
+                        },
+                        {
+                            index: 'inport',
+                            title: '批量导入'
+                        }
+                    ]
+                },
+                {
+                    icon: 'el-icon-lx-link',
+                    index: 'relation',
+                    title: '考核关系'
                 },
                 {
                     icon: 'el-icon-lx-cascades',

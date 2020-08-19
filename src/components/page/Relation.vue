@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 人员列表
+                    <i class="el-icon-lx-cascades"></i> 打分关系表
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -20,7 +20,7 @@
                 <el-button type="primary" icon="el-icon-lx-add" @click="addUser">新增</el-button>
             </div>
             <el-table
-                :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)"
+                :data="tableData"
                 border
                 class="table"
                 ref="multipleTable"
@@ -28,41 +28,25 @@
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center">
-                    
                 </el-table-column>
-                <el-table-column prop="id" label="ID" width="100" align="center">
+                <el-table-column prop="examiner" label="考核人">
                     <template slot-scope="{row}">
-                        <span>{{ row.id }}</span>
+                        <span>{{ row.examiner }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="name" label="姓名">
+                <el-table-column prop="candidate" label="被考核人">
                     <template slot-scope="{row}">
-                        <span>{{ row.name }}</span>
+                        <span>{{ row.candidate }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="email" label="邮箱">
+                <el-table-column prop="type" label="考核类别">
                     <template slot-scope="{row}">
-                        <span>{{ row.email }}</span>
+                        <span>{{ row.type }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="position" label="职位">
+                <el-table-column prop="groups" label="考核分组">
                     <template slot-scope="{row}">
-                        <span>{{ row.position }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="department" label="部门">
-                    <template slot-scope="{row}">
-                        <span>{{ row.department }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="hiredate" label="入职时间">
-                    <template slot-scope="{row}">
-                        <span>{{ row.hiredate }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="isdafen" label="是否参与打分">
-                    <template slot-scope="{row}">
-                        <span>{{ row.isdafen== '1' ? '参与' : '不参与' }}</span>
+                        <span>{{ row.groups }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
@@ -86,7 +70,6 @@
                     background
                     layout="total, prev, pager, next"
                     :current-page="query.pageIndex"
-                    :page-sizes="[1,10,20,50]"
                     :page-size="query.pageSize"
                     :total="pageTotal"
                     @current-change="handlePageChange"
@@ -97,24 +80,33 @@
         <!-- 编辑弹出框 -->
         <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
             <el-form ref="editform" :model="editform" :rules="rules" label-width="70px">
-                <el-form-item label="ID" prop="id">
-                    <el-input v-model="editform.id" readonly="readonly"></el-input>
+                <el-form-item label="考核人" prop="examiner">
+                    <el-input v-model="editform.examiner" readonly="readonly"></el-input>
                 </el-form-item>
-                <el-form-item label="姓名" prop="name">
-                    <el-input v-model="editform.name"></el-input>
+                <el-form-item label="被考核人" prop="candidate">
+                    <el-input v-model="editform.candidate" readonly="readonly"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱" prop="email">
-                    <el-input v-model="editform.email"></el-input>
+                <el-form-item label="考核类型">
+                    <el-select v-model="editform.type" placeholder="请选择">
+                        <el-option key="A" label="上级(A)" value="A"></el-option>
+                        <el-option key="B" label="同级(B)" value="B"></el-option>
+                        <el-option key="C" label="服务对象(C)" value="C"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="职位" prop="position">
-                    <el-input v-model="editform.position"></el-input>
+                <el-form-item label="考核分组">
+                    <el-select v-model="editform.groups" placeholder="请选择">
+                        <el-option key="1" label="第一组" value="1"></el-option>
+                        <el-option key="2" label="第二组" value="2"></el-option>
+                        <el-option key="3" label="第三组" value="3"></el-option>
+                        <el-option key="4" label="第四组" value="4"></el-option>
+                        <el-option key="5" label="第五组" value="5"></el-option>
+                        <el-option key="6" label="第六组" value="6"></el-option>
+                        <el-option key="7" label="第七组" value="7"></el-option>
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="部门" prop="department">
-                    <el-input v-model="editform.department"></el-input>
-                </el-form-item>
-                <el-form-item label="参与打分" prop="department">
-                    <el-input v-model="editform.isdafen"></el-input>
-                </el-form-item>
+                <!-- <el-form-item label="考核分组" prop="groups">
+                    <el-input v-model="editform.groups"></el-input>
+                </el-form-item> -->
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editVisible = false">取 消</el-button>
@@ -163,17 +155,17 @@
 </template>
 
 <script>
-import { fetchData,saveEditInfo,deleteUserInfo,addUserInfo } from '../../api/index';
+import { fetchData,saveEditInfo } from '../../api/relation';
 
 export default {
     name: 'basetable',
     data() {
         return {
             query: {
-                id: '',
+                /* id: '',
                 name: '',
                 position: '',
-                department: '',
+                department: '', */
                 pageIndex: 1,
                 pageSize: 10
             },
@@ -187,22 +179,19 @@ export default {
             addVisible: false,
             pageTotal: 0,
             editform: {
-                id: '',
-                name: '',
-                email: '',
-                position: '',
-                department:'',
-                isdafen: ''
+                examiner: '',
+                candidata: '',
+                type: '',
+                groups: ''
             },
             addform: {
-                id: '',
-                name: '',
-                email: '',
-                position: '',
-                department: '',
-                isdafen: ''
+                examiner: '',
+                candidata: '',
+                type: '',
+                groups: ''
             },
             idx: -1,
+            /* id: -1, */
             rules: {
                 id: [
                     { required:true, message: 'id不可为空',trigger: 'blur'},
