@@ -188,7 +188,7 @@
 </template>
 
 <script>
-import { fetchData, saveEditInfo, addRelationInfo, deleteRelationInfo } from '../../api/relation';
+import { fetchData, saveEditInfo, addRelationInfo, deleteRelationInfo, upload } from '../../api/relation';
 
 export default {
     name: 'basetable',
@@ -329,6 +329,23 @@ export default {
         //新增单个人员信息
         addRelation(){
             this.addVisible = true;
+        },
+        //批量导入考核关系
+        importRelation() {
+            console.log(this.tableData)
+            if(this.tableData.length !== 0){
+                this.$alert('请先清空现有考核关系','提示',{
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        this.$message({
+                            type: 'info',
+                            message: '操作取消'
+                        })
+                    }
+                })
+            } else {
+                this.importVisible = true;  
+            }
         },
         // 单行删除操作
         handleDelete(index, row) {

@@ -35,3 +35,11 @@ export const deleteRelationInfo = delList => {
         data: delList
     });
 }
+
+export const upload = formData => {
+    return request({
+        url: '/relation/upload/',
+        method: 'post',
+        data: formData
+    });
+}
