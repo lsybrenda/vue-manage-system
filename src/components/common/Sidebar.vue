@@ -63,7 +63,7 @@ export default {
                 },
                 {
                     icon: 'el-icon-lx-people',
-                    index: '2',
+                    index: 'user',
                     title: '人员信息',
                     subs: [
                         {
@@ -71,7 +71,7 @@ export default {
                             title: '人员列表'
                         },
                         {
-                            index: 'inport',
+                            index: 'userInport',
                             title: '批量导入'
                         }
                     ]

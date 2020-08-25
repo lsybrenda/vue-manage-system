@@ -38,3 +38,11 @@ export const deleteUserInfo = delstr => {
     });
 }
 
+export const upload = formData => {
+    return request({
+        url: '/userinfo/upload/',
+        method: 'post',
+        data: formData
+    });
+}
+

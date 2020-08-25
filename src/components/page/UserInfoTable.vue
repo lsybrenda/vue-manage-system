@@ -18,7 +18,34 @@
                 <el-input v-model="query.name" placeholder="用户名" class="handle-input mr10"></el-input>
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
                 <el-button type="primary" icon="el-icon-lx-add" @click="addUser">新增</el-button>
+                <el-button type="primary" icon="el-icon-lx-upload" @click="importUser">批量导入</el-button>
             </div>
+            <!--上传文件弹窗-->
+            <el-dialog title="批量导入" :visible.sync="importVisible" width="70%">
+                <el-upload
+                    class="upload-demo"
+                    drag
+                    action=""
+                    accept=".xlsx,.xls"
+                    multiple
+                    :auto-upload="false"
+                    :before-upload="beforeUploadFile"
+                    :on-change="fileChange"
+                    :on-exceed="exceedFile"
+                    :on-success="handleSuccess"
+                    :on-error="handleError"
+                    :file-list="fileList"
+                    >
+                    <i class="el-icon-upload"></i>
+                    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+                    <div class="el-upload__tip" slot="tip">只能上传.xlsx/.xls文件，且不超过10M</div>
+                </el-upload>
+                <span slot="footer" class="dialog-footer">
+                    <el-button size="small" type="primary" @click="uploadFile">立即上传</el-button>
+                    <el-button @click="importVisible = false">取 消</el-button> 
+                </span>
+
+            </el-dialog>
             <el-table
                 :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)"
                 border
@@ -163,7 +190,7 @@
 </template>
 
 <script>
-import { fetchData,saveEditInfo,deleteUserInfo,addUserInfo } from '../../api/index';
+import { fetchData,saveEditInfo,deleteUserInfo,addUserInfo,upload } from '../../api/index';
 
 export default {
     name: 'basetable',
@@ -177,12 +204,15 @@ export default {
                 pageIndex: 1,
                 pageSize: 10
             },
+            limitNum: 1, //允许上传的Excel最大数
+            fileList: [],//excel文件列表
             tableData: [],
             multipleSelection: [],
             delList: [],//存放要删除的id
             delstr: '',
             delVisible: false,
             msg: "",
+            importVisible: false,
             editVisible: false,
             addVisible: false,
             pageTotal: 0,
@@ -222,12 +252,73 @@ export default {
         this.getData();
     },
     methods: {
+        // 超出最大上传文件数
+        exceedFile(files,fileList) {
+            this.$message.warning('只能选择 ${this.limitNum} 个文件')
+        },
+        // 文件状态改变时
+        fileChange(file, fileList) {
+            console.log(file.raw);
+            this.fileList.push(file.raw);
+            console.log(this.fileList)
+        },
+        // 上传文件之前的处理
+        beforeUploadFile(file) {
+            console.log('before upload');
+            console.log(file);
+            let extension = file.name.substring(file.name.lastIndexOf(',') + 1);
+            let size = file.size / 1024 / 1024;
+            if(extension !== 'xlsx' && extension !== '.xls'){
+                this.$message.warning('只能上传.xlsx和.xls格式的文件');
+            }
+            if(size > 10){
+                this.$message.warning('上传文件大小不得超过10M');
+            }
+        },
+        //上传文件成功
+        handleSuccess(res, file, fileList) {
+            this.$message.success('文件上传成功');
+        },
+        //上传文件失败
+        handleError(err, file, fileList) {
+            this.$message.error('上传文件失败，请联系管理员或稍后重试');
+        },
+        // 上传文件
+        uploadFile() {
+            if(this.fileList.length === 0){
+                this.$message.warning('请选择文件');
+            } else {
+                var formData = new FormData();
+                formData.append('file',this.fileList[0]);
+                //console.log(this.fileList[0])
+                upload(formData).then(res => {
+                    console.log(res);
+                    if(res.success){
+                        this.$message({
+                            message: "导入成功",
+                            type: "success",
+                        });
+                        this.fileList=[];
+                        this.importVisible = false;
+                        this.getData();
+                    }else{
+                        //alert(res.$message);
+                        this.$message({
+                            message: "导入失败，请稍后重试或联系管理员",
+                            type: "error",
+                        })
+                        this.importVisible = false;
+                        this.getData();
+                    }
+                })
+            }
+        },
         // 获取 table 的数据
         getData() {
             fetchData(this.query).then(res => {
                 console.log(res);
                 this.tableData = res.data.items;
-                this.pageTotal = res.data.total || 50;
+                this.pageTotal = res.data.total || 0;
             });
         },
         // 触发搜索按钮
@@ -239,14 +330,29 @@ export default {
         addUser(){
             this.addVisible = true;
         },
+        //批量导入人员信息
+        importUser() {
+            console.log(this.tableData)
+            if(this.tableData.length !== 0){
+                this.$alert('请先清空现有人员信息','提示',{
+                    confirmButtonText: '确定',
+                    callback: action => {
+                        this.$message({
+                            type: 'info',
+                            message: '操作取消'
+                        })
+                    }
+                })
+            } else {
+                this.importVisible = true;  
+            }
+        },
         // 单行删除操作
         handleDelete(index, row) {
             this.idx = index;
             this.msg = row;
             this.delList.push(this.msg.id);
             this.delVisible = true;
-            //this.$message.success('删除成功');
-            //this.tableData.splice(index, 1);
         },
         // 多选操作
         handleSelectionChange(val) {
@@ -256,11 +362,6 @@ export default {
         delAllSelection() {
             this.delVisible = true;//显示删除弹框
             const length = this.multipleSelection.length;
-            /* let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].id + ' ';
-            } */
             for(let i = 0; i < length; i++){
                 this.delList.push(this.multipleSelection[i].id)
             }
@@ -277,7 +378,6 @@ export default {
                 this.delstr += this.delList[i] + ',';
             }
             this.delstr += this.delList[i];
-            //debugger;
             deleteUserInfo(this.delstr).then(response => {
                 console.log(response)
                 this.getData();
@@ -313,7 +413,6 @@ export default {
                 }
             })
             this.addVisible = false;
-            //getData()
         },
         // 保存编辑
         saveEdit(formName) {

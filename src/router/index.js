@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+//import { component } from 'vue/types/umd';
 
 Vue.use(Router);
 
@@ -23,6 +24,11 @@ export default new Router({
                     path: '/userinfo',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/UserInfoTable.vue'),
                     meta: { title: '人员信息' }
+                },
+                {
+                    path: '/userInport',
+                    component: () => import(/* webpackChunkName: "upload" */ '../components/page/UserInport.vue'),
+                    meta: { title: '批量导入'}
                 },
                 {
                     path: '/relation',

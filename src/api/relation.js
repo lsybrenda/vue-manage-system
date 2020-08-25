@@ -19,3 +19,19 @@ export const saveEditInfo = query => {
       params: query
     })
 }
+
+export const addRelationInfo = query => {
+    return request({
+      url: '/relation/addRelationInfo/',
+      method: 'get',
+      params: query
+    })
+}
+
+export const deleteRelationInfo = delList => {
+    return request({
+        url: '/relation/deleteRelationInfo/',
+        method: 'post',
+        data: delList
+    });
+}
