@@ -33,7 +33,27 @@ export default new Router({
                 {
                     path: '/relation',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/Relation.vue'),
-                    meta: { title: '考核关系' }
+                    meta: { title: '打分关系' }
+                },
+                {
+                    path: '/examiner',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Examiner.vue'),
+                    meta: { title: '考核内容' }
+                },
+                {
+                    path: '/examinerDetail',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/ExaminerDetail.vue'),
+                    meta: { title: '考核列表' }
+                },
+                {
+                    path: '/examinerInport',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Examiner.vue'),
+                    meta: { title: 'WORD导入' }
+                },
+                {
+                    path: '/grade',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Grade.vue'),
+                    meta: { title: '分数管理' }
                 },
                 {
                     path: '/icon',

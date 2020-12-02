@@ -46,3 +46,11 @@ export const upload = formData => {
     });
 }
 
+export const userLogin = loginData => {
+    return request({
+        url: '/userinfo/userLogin/',
+        method: 'post',
+        params: loginData
+    })
+}
+

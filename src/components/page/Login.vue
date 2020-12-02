@@ -2,9 +2,9 @@
     <div class="login-wrap">
         <div class="ms-login">
             <div class="ms-title">后台管理系统</div>
-            <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
+            <el-form :model="loginData" :rules="rules" ref="login" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="param.username" placeholder="username">
+                    <el-input v-model="loginData.username" placeholder="username">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
@@ -12,7 +12,7 @@
                     <el-input
                         type="password"
                         placeholder="password"
-                        v-model="param.password"
+                        v-model="loginData.password"
                         @keyup.enter.native="submitForm()"
                     >
                         <el-button slot="prepend" icon="el-icon-lx-lock"></el-button>
@@ -21,6 +21,9 @@
                 <div class="login-btn">
                     <el-button type="primary" @click="submitForm()">登录</el-button>
                 </div>
+                <div class="login-btn">
+                    <el-button type="primary" @click="userRegister()">注册</el-button>
+                </div>
                 <!-- <p class="login-tips">Tips : 用户名和密码随便填。</p> -->
             </el-form>
         </div>
@@ -28,12 +31,17 @@
 </template>
 
 <script>
+import { userLogin } from '../../api/index'
 export default {
     data: function() {
         return {
-            param: {
-                username: 'admin',
-                password: '123123',
+            // param: {
+            //     username: 'admin',
+            //     password: '123123',
+            // },
+            loginData: {
+                username: '',
+                password: ''
             },
             rules: {
                 username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
@@ -45,9 +53,20 @@ export default {
         submitForm() {
             this.$refs.login.validate(valid => {
                 if (valid) {
-                    this.$message.success('登录成功');
-                    localStorage.setItem('ms_username', this.param.username);
-                    this.$router.push('/');
+                    // this.$message.success('登录成功');
+                    // localStorage.setItem('ms_username', this.loginData.username);
+                    // this.$router.push('/');
+                    userLogin(this.loginData).then(res => {
+                        console.log(res)
+                        if(res.success){
+                            this.$message.success('登录成功');
+                            localStorage.setItem('ms_username', this.loginData.username);
+                            this.$router.push('/');
+                        } else {
+                            this.$message.error('登录失败,请检查账号和密码')
+                            return false;
+                        }
+                    })
                 } else {
                     this.$message.error('请输入账号和密码');
                     console.log('error submit!!');
@@ -55,6 +74,16 @@ export default {
                 }
             });
         },
+
+        // 注册
+        userRegister() {
+            this.$message.info('注册功能暂未开放，请联系管理员')
+        },
+
+        //清除cookie
+        clearCookie: function() {
+            this.setCookie("", "", -1); //修改2值都为空，天数为负1天就好了
+        }
     },
 };
 </script>

@@ -79,7 +79,27 @@ export default {
                 {
                     icon: 'el-icon-lx-link',
                     index: 'relation',
-                    title: '考核关系'
+                    title: '打分关系'
+                },
+                {
+                    icon: 'el-icon-lx-text',
+                    index: 'examiner',
+                    title: '考核内容',
+                    subs: [
+                        {
+                            index: 'examinerDetail',
+                            title: '考核列表'
+                        },
+                        {
+                            index: 'examinerInport',
+                            title: 'WORD导入',
+                        }
+                    ]
+                },
+                {
+                    icon: 'el-icon-lx-tagfill',
+                    index: 'grade',
+                    title: '分数管理'
                 },
                 {
                     icon: 'el-icon-lx-cascades',
