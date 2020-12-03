@@ -21,7 +21,7 @@
                 <el-button type="primary" icon="el-icon-lx-upload" @click="importRelation">批量导入</el-button>
             </div>
             <el-table
-                :data="tableData"
+                :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)"
                 border
                 class="table"
                 ref="multipleTable"
@@ -70,6 +70,7 @@
             <el-dialog title="批量导入" :visible.sync="importVisible" width="70%">
                 <el-upload
                     class="upload-demo"
+                    ref="upload"
                     drag
                     action=""
                     accept=".xlsx,.xls"
@@ -77,6 +78,7 @@
                     :auto-upload="false"
                     :before-upload="beforeUploadFile"
                     :on-change="fileChange"
+                    :on-remove="handleRemove"
                     :on-exceed="exceedFile"
                     :on-success="handleSuccess"
                     :on-error="handleError"
@@ -97,6 +99,7 @@
                     background
                     layout="total, prev, pager, next"
                     :current-page="query.pageIndex"
+                    :page-sizes="[1,10,20,50]"
                     :page-size="query.pageSize"
                     :total="pageTotal"
                     @current-change="handlePageChange"
@@ -202,8 +205,8 @@ export default {
                 pageIndex: 1,
                 pageSize: 10
             },
-            limitNum: 1, //允许上传的Excel最大数
-            fileList: [],//excel文件列表
+            limitNum: 1, // 允许上传的Excel最大数
+            fileList: [],// excel文件列表
             tableData: [],
             multipleSelection: [],
             delRelation: {
@@ -262,13 +265,17 @@ export default {
         },
         // 超出最大上传文件数
         exceedFile(files,fileList) {
-            this.$message.warning('只能选择 ${this.limitNum} 个文件')
+            this.$message.warning('只能选择 ${this.limitNum} 个文件,当前共选择了${files.length + fileList.length}个文件')
         },
         // 文件状态改变时
         fileChange(file, fileList) {
             console.log(file.raw);
             this.fileList.push(file.raw);
             console.log(this.fileList)
+        },
+        // 移除文件
+        handleRemove(file, fileList) {
+            this.fileList = fileList;
         },
         // 上传文件之前的处理
         beforeUploadFile(file) {
@@ -285,6 +292,7 @@ export default {
         },
         //上传文件成功
         handleSuccess(res, file, fileList) {
+            // this.$refs.upload.clearFiles();
             this.$message.success('文件上传成功');
         },
         //上传文件失败
@@ -295,6 +303,8 @@ export default {
         uploadFile() {
             if(this.fileList.length === 0){
                 this.$message.warning('请选择文件');
+            } else if(this.fileList.length > 1) {
+                this.$message.warning('一次仅可上传一个文件,请重新选择')
             } else {
                 var formData = new FormData();
                 formData.append('file',this.fileList[0]);

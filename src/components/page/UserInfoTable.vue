@@ -144,7 +144,8 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
+                <!-- <el-button @click="editVisible = false">取 消</el-button> -->
+                <el-button @click="cancelEdit('editform')">取消</el-button>
                 <el-button type="primary" @click="saveEdit('editform')">确 定</el-button>
             </span>
         </el-dialog>
@@ -360,13 +361,17 @@ export default {
         },
         //批量删除
         delAllSelection() {
-            this.delVisible = true;//显示删除弹框
             const length = this.multipleSelection.length;
-            for(let i = 0; i < length; i++){
-                this.delList.push(this.multipleSelection[i].id)
-            }
-            //this.$message.error(`删除了${str}`);
-            this.multipleSelection = [];
+            if (length === 0) {
+                alert("请选择要删除的人员");
+            } else {
+                this.delVisible = true;//显示删除弹框
+                for(let i = 0; i < length; i++){
+                    this.delList.push(this.multipleSelection[i].id)
+                }
+                //this.$message.error(`删除了${str}`);
+                this.multipleSelection = [];
+            } 
         },
         //确定删除操作
         deleteRow(){
@@ -413,6 +418,10 @@ export default {
                 }
             })
             this.addVisible = false;
+        },
+        // 取消编辑
+        cancelEdit(formName) {
+            this.editVisible = false;
         },
         // 保存编辑
         saveEdit(formName) {
