@@ -87,11 +87,11 @@ export default {
                     title: '考核内容',
                     subs: [
                         {
-                            index: 'examinerDetail',
+                            index: 'examList',
                             title: '考核列表'
                         },
                         {
-                            index: 'examinerInport',
+                            index: 'examinerImport',
                             title: 'WORD导入',
                         }
                     ]

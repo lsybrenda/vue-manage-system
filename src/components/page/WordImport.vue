@@ -15,6 +15,7 @@
                 :auto-upload="false"
                 :before-upload="beforeUploadFile"
                 :on-change="fileChange"
+                :on-remove="handleRemove"
                 :on-success="handleSuccess"
                 :on-error="handleError"
                 :file-list="fileList"
@@ -68,6 +69,10 @@ export default {
                 this.fileList.push(file.raw);
                 console.log(this.fileList)
             }
+        },
+        // 移除文件
+        handleRemove(file, fileList) {
+            this.fileList = fileList;
         },
         submitUpload() {
             if(this.fileList.length === 0){

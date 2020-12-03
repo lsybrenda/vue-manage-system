@@ -36,18 +36,18 @@ export default new Router({
                     meta: { title: '打分关系' }
                 },
                 {
-                    path: '/examiner',
-                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Examiner.vue'),
-                    meta: { title: '考核内容' }
-                },
-                {
-                    path: '/examinerDetail',
-                    component: () => import(/* webpackChunkName: "table" */ '../components/page/ExaminerDetail.vue'),
+                    path: '/examList',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/ExamList.vue'),
                     meta: { title: '考核列表' }
                 },
+                // {
+                //     path: '/examList',
+                //     component: () => import(/* webpackChunkName: "table" */ '../components/page/ExamList.vue'),
+                //     meta: { title: '考核列表' }
+                // },
                 {
-                    path: '/examinerInport',
-                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Examiner.vue'),
+                    path: '/examinerImport',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/WordImport.vue'),
                     meta: { title: 'WORD导入' }
                 },
                 {
