@@ -23,51 +23,36 @@
                 <el-button type="primary" icon="el-icon-search" @click="handleSearch">搜索</el-button>
             </div>
             <el-table
-                :data="tableData"
+                :data="tableData.slice((query.pageIndex-1)*query.pageSize,query.pageIndex*query.pageSize)"
                 border
                 class="table"
-                ref="multipleTable"
+                ref="examTable"
                 header-cell-class-name="table-header"
                 @selection-change="handleSelectionChange"
             >
                 <el-table-column type="selection" width="55" align="center"></el-table-column>
-                <el-table-column prop="id" label="ID" width="55" align="center"></el-table-column>
-                <el-table-column prop="name" label="用户名"></el-table-column>
-                <el-table-column label="账户余额">
-                    <template slot-scope="scope">￥{{scope.row.money}}</template>
-                </el-table-column>
-                <el-table-column label="头像(查看大图)" align="center">
-                    <template slot-scope="scope">
-                        <el-image
-                            class="table-td-thumb"
-                            :src="scope.row.thumb"
-                            :preview-src-list="[scope.row.thumb]"
-                        ></el-image>
+                <el-table-column prop="id" label="ID" width="120" align="center">
+                    <template slot-scope="{row}">
+                        <span>{{ row.id }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="address" label="地址"></el-table-column>
-                <el-table-column label="状态" align="center">
-                    <template slot-scope="scope">
-                        <el-tag
-                            :type="scope.row.state==='成功'?'success':(scope.row.state==='失败'?'danger':'')"
-                        >{{scope.row.state}}</el-tag>
+                <el-table-column prop="name" label="姓名">
+                    <template slot-scope="{row}">
+                        <span>{{ row.name }}</span>
                     </template>
                 </el-table-column>
-
-                <el-table-column prop="date" label="注册时间"></el-table-column>
+                <el-table-column prop="position" label="职位">
+                    <template slot-scope="{row}">
+                        <span>{{ row.position }}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column label="操作" width="180" align="center">
                     <template slot-scope="scope">
                         <el-button
                             type="text"
-                            icon="el-icon-edit"
-                            @click="handleEdit(scope.$index, scope.row)"
-                        >编辑</el-button>
-                        <el-button
-                            type="text"
-                            icon="el-icon-delete"
-                            class="red"
-                            @click="handleDelete(scope.$index, scope.row)"
-                        >删除</el-button>
+                            icon="el-icon-lx-text"
+                            @click="showExamDetail(scope.$index, scope.row)"
+                        >查看考核表</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -76,38 +61,28 @@
                     background
                     layout="total, prev, pager, next"
                     :current-page="query.pageIndex"
+                    :page-sizes="[1,10,20,50]"
                     :page-size="query.pageSize"
                     :total="pageTotal"
                     @current-change="handlePageChange"
                 ></el-pagination>
             </div>
         </div>
-
-        <!-- 编辑弹出框 -->
-        <el-dialog title="编辑" :visible.sync="editVisible" width="30%">
-            <el-form ref="form" :model="form" label-width="70px">
-                <el-form-item label="用户名">
-                    <el-input v-model="form.name"></el-input>
-                </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address"></el-input>
-                </el-form-item>
-            </el-form>
-            <span slot="footer" class="dialog-footer">
-                <el-button @click="editVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveEdit">确 定</el-button>
-            </span>
-        </el-dialog>
     </div>
 </template>
 
 <script>
-import { fetchData } from '../../api/index';
+import { fetchData } from '../../api/examiner';
+import Vue from "vue";
+import Router from "vue-router";
+
 export default {
     name: 'basetable',
     data() {
         return {
             query: {
+                id: '',
+                name: '',
                 address: '',
                 name: '',
                 pageIndex: 1,
@@ -116,7 +91,6 @@ export default {
             tableData: [],
             multipleSelection: [],
             delList: [],
-            editVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
@@ -127,13 +101,19 @@ export default {
         this.getData();
     },
     methods: {
-        // 获取 easy-mock 的模拟数据
+        // 获取打分表数据
         getData() {
             fetchData(this.query).then(res => {
                 console.log(res);
-                this.tableData = res.list;
-                this.pageTotal = res.pageTotal || 50;
+                this.tableData = res.data.items;
+                this.pageTotal = res.data.total || 0;
             });
+        },
+        // 查看考核表
+        showExamDetail(index,row) {
+            let examId = row.id;
+            // 点击实现跳转
+            this.$router.push({path: '/examDetail',query: {id: examId}})
         },
         // 触发搜索按钮
         handleSearch() {
@@ -165,18 +145,6 @@ export default {
             }
             this.$message.error(`删除了${str}`);
             this.multipleSelection = [];
-        },
-        // 编辑操作
-        handleEdit(index, row) {
-            this.idx = index;
-            this.form = row;
-            this.editVisible = true;
-        },
-        // 保存编辑
-        saveEdit() {
-            this.editVisible = false;
-            this.$message.success(`修改第 ${this.idx + 1} 行成功`);
-            this.$set(this.tableData, this.idx, this.form);
         },
         // 分页导航
         handlePageChange(val) {

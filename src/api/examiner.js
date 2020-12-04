@@ -8,3 +8,11 @@ export const fileUpload = formData => {
         data: formData
     });
 }
+
+export const fetchData = query => {
+    return request({
+        url: '/examiner/getExamList/',
+        method: 'get',
+        params: query
+    });
+}

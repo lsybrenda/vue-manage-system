@@ -40,11 +40,11 @@ export default new Router({
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/ExamList.vue'),
                     meta: { title: '考核列表' }
                 },
-                // {
-                //     path: '/examList',
-                //     component: () => import(/* webpackChunkName: "table" */ '../components/page/ExamList.vue'),
-                //     meta: { title: '考核列表' }
-                // },
+                {
+                    path: '/examDetail',
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/ExamDetail.vue'),
+                    meta: { title: '考核内容' }
+                },
                 {
                     path: '/examinerImport',
                     component: () => import(/* webpackChunkName: "table" */ '../components/page/WordImport.vue'),
