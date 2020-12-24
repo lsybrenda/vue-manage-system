@@ -16,3 +16,11 @@ export const fetchData = query => {
         params: query
     });
 }
+
+export const getDetail = query => {
+    return request({
+        url: '/examiner/getExamDetail/',
+        method: 'get',
+        params: query
+    });
+}

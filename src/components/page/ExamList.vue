@@ -3,7 +3,7 @@
         <div class="crumbs">
             <el-breadcrumb separator="/">
                 <el-breadcrumb-item>
-                    <i class="el-icon-lx-cascades"></i> 基础表格
+                    <i class="el-icon-lx-cascades"></i> 考核列表
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -151,7 +151,8 @@ export default {
             this.$set(this.query, 'pageIndex', val);
             this.getData();
         }
-    }
+    },
+    
 };
 </script>
 
