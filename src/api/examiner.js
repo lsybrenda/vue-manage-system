@@ -24,3 +24,13 @@ export const getDetail = query => {
         params: query
     });
 }
+
+export const deleteExamIds = delIDs => {
+    return request({
+        url: '/examiner/deleteExamIds/',
+        method: 'post',
+        data: {
+            owner:delIDs
+        }
+    });
+}

@@ -379,7 +379,6 @@ export default {
             for(let i = 0; i < length; i++){
                 this.delList.push(this.multipleSelection[i].id)
             }
-            //this.$message.error(`删除了${str}`);
             this.multipleSelection = [];
         },
         //确定删除操作

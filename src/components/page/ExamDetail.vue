@@ -7,7 +7,6 @@
                 </el-breadcrumb-item>
             </el-breadcrumb>
         </div>
-        <router-view id="key" :key="new Date().getTime()"></router-view>
         <el-container>
             <el-header>各部门领导干部考核评估表</el-header>
             <el-container>
@@ -116,18 +115,11 @@ export default {
         // 获取打分表数据
         getData() {
             this.query.id = this.$route.query && this.$route.query.id;
-            alert(this.query.id)
             //console.log(this.$route.query.id);
             getDetail(this.query).then(res => {
                 this.performanceTargets = res.examination;
                 this.query.id = '';
             });
-        },
-        // 查看考核表
-        showExamDetail(index,row) {
-            let examId = row.id;
-            // 点击实现跳转
-            this.$router.push({path: '/examDetail',query: {id: examId}})
         },
         // 触发搜索按钮
         handleSearch() {

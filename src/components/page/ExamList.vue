@@ -68,11 +68,19 @@
                 ></el-pagination>
             </div>
         </div>
+        <!-- 删除提示框 -->
+        <el-dialog title="提示" :visible.sync="delVisible" width="300px" center>
+            <div class="del-dialog-cnt">删除不可恢复，是否确定删除？</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delVisible = false">取 消</el-button>
+                <el-button type="primary" @click="deleteRow" >确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
 <script>
-import { fetchData } from '../../api/examiner';
+import { fetchData , deleteExamIds } from '../../api/examiner';
 import Vue from "vue";
 import Router from "vue-router";
 
@@ -91,10 +99,12 @@ export default {
             tableData: [],
             multipleSelection: [],
             delList: [],
+            delVisible: false,
             pageTotal: 0,
             form: {},
             idx: -1,
-            id: -1
+            id: -1,
+            delIDs: ''
         };
     },
     created() {
@@ -112,38 +122,51 @@ export default {
         // 查看考核表
         showExamDetail(index,row) {
             let examId = row.id;
+            let position = row.position;
             // 点击实现跳转
-            this.$router.push({path: '/examDetail',query: {id: examId}})
+            // 区分领导干部和普通员工
+            if(position !== '员工') {
+                this.$router.push({path: '/examDetail',query: {id: examId}})
+            } else {
+                //this.$router.push()
+                alert('暂无')
+            }
         },
         // 触发搜索按钮
         handleSearch() {
             this.$set(this.query, 'pageIndex', 1);
             this.getData();
         },
-        // 删除操作
-        handleDelete(index, row) {
-            // 二次确认删除
-            this.$confirm('确定要删除吗？', '提示', {
-                type: 'warning'
+        //确定删除操作
+        deleteRow(){
+            //debugger;
+            console.log(this.delIDs)
+            deleteExamIds(this.delIDs).then(response => {
+                console.log(response)
+                this.getData();
+                this.$message.success('删除成功')
+            }).catch(error => {
+                console.log(error);
+                this.$message.error('删除失败')
             })
-                .then(() => {
-                    this.$message.success('删除成功');
-                    this.tableData.splice(index, 1);
-                })
-                .catch(() => {});
+            this.delVisible = false;
+            this.delList = [];
+            this.delIDs = '';
         },
         // 多选操作
         handleSelectionChange(val) {
             this.multipleSelection = val;
         },
         delAllSelection() {
-            const length = this.multipleSelection.length;
-            let str = '';
-            this.delList = this.delList.concat(this.multipleSelection);
-            for (let i = 0; i < length; i++) {
-                str += this.multipleSelection[i].name + ' ';
-            }
-            this.$message.error(`删除了${str}`);
+            this.delVisible = true;//显示删除弹框
+            this.delIDs = '';
+            
+            // const length = this.multipleSelection.length;
+            // for (let i = 0; i < length; i++) {
+            //     this.delIDs += this.multipleSelection[i].id + ' ';
+            // }
+            // this.$message.error(`删除了${this.delIDs}`);
+            this.delIDs = this.multipleSelection.map(item => item.id).join()
             this.multipleSelection = [];
         },
         // 分页导航
