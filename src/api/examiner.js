@@ -34,3 +34,17 @@ export const deleteExamIds = delIDs => {
         }
     });
 }
+
+export const wordEmpty = function() {
+    return request({
+        url: '/examiner/wordEmpty/',
+        method: 'post'
+    })
+}
+
+export const getWordContent = function(){
+    return request({
+        url: '/examiner/getWordContent/',
+        method: 'post'
+    })
+}

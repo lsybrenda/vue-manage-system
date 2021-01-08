@@ -26,13 +26,22 @@
             </el-upload>
         </div>
         <div style="margin-top:10px;">
-            <el-button size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+            <el-button size="small" type="warning" @click="emptyFile">清空(首次操作前请先进行清空操作)</el-button>
+        </div>
+        <div style="margin-top:10px;">
+            <el-button size="small" type="primary" @click="submitUpload">上传Word文件到服务器</el-button>
+        </div>
+        <div style="margin-top:10px;">
+            <el-button size="small" type="primary" @click="wordAnalysis">批量解析Word文件</el-button>
+        </div>
+        <div style="margin-top:10px;">
+            <el-button size="small" type="primary" @click="excelDownload">下载解析后的Excel文件</el-button>
         </div>
     </div>
 </template>
 
 <script>
-import { fileUpload } from '../../api/examiner';
+import { fileUpload, wordEmpty, getWordContent } from '../../api/examiner';
 import VueCropper  from 'vue-cropperjs';
 export default {
     name: 'upload',
@@ -45,6 +54,27 @@ export default {
         VueCropper
     },
     methods: {
+        // 清空文件
+        emptyFile() {
+            console.log('开始清空...')
+            wordEmpty().then(res => {
+                if(res.success){
+                    this.$message.success('历史数据已清空,可开始上传')
+                }else{
+                    this.$message.error('操作失败,请稍后重试或联系管理员')
+                }
+            })
+        },
+        // 解析word文件
+        wordAnalysis() {
+            getWordContent().then(res => {
+                if(res.success) {
+                    this.$message.success('已完成Word解析并生成Excel文件')
+                } else {
+                    this.$message.error('解析出现错误,请稍后重试或联系管理员')
+                }
+            })
+        },
         // 上传文件之前的处理
         beforeUploadFile(file) {
             console.log('before upload');
@@ -98,15 +128,14 @@ export default {
                 })
             }
         },
-            //上传文件成功
+        // 上传文件成功
         handleSuccess(res, file, fileList) {
             this.$message.success('文件上传成功');
         },
-        //上传文件失败
+        // 上传文件失败
         handleError(err, file, fileList) {
             this.$message.error('上传文件失败，请联系管理员或稍后重试');
         },
-        
     }
 }
 </script>
