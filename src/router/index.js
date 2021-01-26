@@ -52,7 +52,7 @@ export default new Router({
                 },
                 {
                     path: '/grade',
-                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Grade.vue'),
+                    component: () => import(/* webpackChunkName: "table" */ '../components/page/Score.vue'),
                     meta: { title: '分数管理' }
                 },
                 {

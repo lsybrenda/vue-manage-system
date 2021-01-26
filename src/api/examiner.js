@@ -42,6 +42,13 @@ export const wordEmpty = function() {
     })
 }
 
+export const excelEmpty = function(){
+    return request({
+        url: '/examiner/excelEmpty',
+        method: 'post'
+    })
+}
+
 export const getWordContent = function(){
     return request({
         url: '/examiner/getWordContent/',

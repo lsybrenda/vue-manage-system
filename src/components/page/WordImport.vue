@@ -26,7 +26,7 @@
             </el-upload>
         </div>
         <div style="margin-top:10px;">
-            <el-button size="small" type="warning" @click="emptyFile">清空(首次操作前请先进行清空操作)</el-button>
+            <el-button size="small" type="warning" @click="emptyWord">清空(首次操作前请先进行清空操作)</el-button>
         </div>
         <div style="margin-top:10px;">
             <el-button size="small" type="primary" @click="submitUpload">上传Word文件到服务器</el-button>
@@ -37,11 +37,14 @@
         <div style="margin-top:10px;">
             <el-button size="small" type="primary" @click="excelDownload">下载解析后的Excel文件</el-button>
         </div>
+        <div style="margin-top:10px;">
+            <el-button size="small" type="primary" @click="emptyExcel">下载解析后的Excel文件</el-button>
+        </div>
     </div>
 </template>
 
 <script>
-import { fileUpload, wordEmpty, getWordContent } from '../../api/examiner';
+import { fileUpload, wordEmpty, excelEmpty, getWordContent } from '../../api/examiner';
 import VueCropper  from 'vue-cropperjs';
 export default {
     name: 'upload',
@@ -54,12 +57,23 @@ export default {
         VueCropper
     },
     methods: {
-        // 清空文件
-        emptyFile() {
-            console.log('开始清空...')
+        // 清空Word文件
+        emptyWord() {
+            console.log('开始清空Word...')
             wordEmpty().then(res => {
                 if(res.success){
                     this.$message.success('历史数据已清空,可开始上传')
+                }else{
+                    this.$message.error('操作失败,请稍后重试或联系管理员')
+                }
+            })
+        },
+        // 清空Excel文件
+        emptyExcel() {
+            console.log('开始清空Excel...')
+            excelEmpty().then(res => {
+                if(res.success){
+                    this.$message.success('Excel文件已清空')
                 }else{
                     this.$message.error('操作失败,请稍后重试或联系管理员')
                 }
