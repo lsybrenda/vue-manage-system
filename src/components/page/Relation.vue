@@ -120,7 +120,7 @@
                     <el-select v-model="editform.type" placeholder="请选择">
                         <el-option key="A" label="上级(A)" value="A"></el-option>
                         <el-option key="B" label="同级(B)" value="B"></el-option>
-                        <el-option key="C" label="服务对象(C)" value="C"></el-option>
+                        <el-option key="C" label="下级/服务对象(C)" value="C"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="考核分组">
