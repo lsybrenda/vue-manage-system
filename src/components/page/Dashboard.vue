@@ -16,7 +16,7 @@
                     </div>
                     <div class="user-info-list">
                         上次登录地点：
-                        <span>东莞</span>
+                        <span>北京</span>
                     </div>
                 </el-card>
                 <el-card shadow="hover" style="height:252px;">
@@ -116,7 +116,7 @@ export default {
     name: 'dashboard',
     data() {
         return {
-            name: localStorage.getItem('ms_username'),
+            name: localStorage.getItem('ms_userid'),
             todoList: [
                 {
                     title: '今天要修复100个bug',

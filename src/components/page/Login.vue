@@ -4,7 +4,7 @@
             <div class="ms-title">后台管理系统</div>
             <el-form :model="loginData" :rules="rules" ref="login" label-width="0px" class="ms-content">
                 <el-form-item prop="username">
-                    <el-input v-model="loginData.username" placeholder="username">
+                    <el-input v-model="loginData.userid" placeholder="username">
                         <el-button slot="prepend" icon="el-icon-lx-people"></el-button>
                     </el-input>
                 </el-form-item>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { userLogin } from '../../api/index'
+import { userLogin } from '../../api/login'
 export default {
     data: function() {
         return {
@@ -40,11 +40,11 @@ export default {
             //     password: '123123',
             // },
             loginData: {
-                username: '',
+                userid: '',
                 password: ''
             },
             rules: {
-                username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+                userid: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
                 password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
             },
         };
@@ -58,9 +58,22 @@ export default {
                     // this.$router.push('/');
                     userLogin(this.loginData).then(res => {
                         console.log(res)
-                        if(res.success){
+                        if(res.code == '20007'){
+                            this.$message.error('该账号不存在');
+                            return false;
+                        } else if(res.success){
                             this.$message.success('登录成功');
-                            localStorage.setItem('ms_username', this.loginData.username);
+                            localStorage.setItem('ms_userid', this.loginData.userid);
+                            sessionStorage.setItem('userID' , this.loginData.userid);
+                            //对拦截页面的url路径进行解码
+                            let redirect = decodeURIComponent(this.$route.query.redirect || '/')
+                            //如果存在被拦截的页面，直接跳转被拦截的页面
+                            if (redirect != '/') {
+                                this.$router.push({path:redirect});
+                            } else {
+                                //如果被拦截的页面为'/',则正常跳转首页
+                                this.$router.push('/home')
+                            }
                             this.$router.push('/');
                         } else {
                             this.$message.error('登录失败,请检查账号和密码')
